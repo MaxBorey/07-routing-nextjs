@@ -1,6 +1,8 @@
 import axios from "axios";
 import { Note } from "../types/note";
 
+export type NoteTag = 'Work' | 'Personal' | 'Meeting' | 'Shopping' | 'Todo';
+
 interface NotesApiResponse {
   notes: Note[];
   page: number;
@@ -13,16 +15,19 @@ axios.defaults.headers.common.Authorization = `Bearer ${process.env.NEXT_PUBLIC_
 
 export async function getNotes(
   search: string = '',
-  page: number,
-  perPage: number = 12 
+  page: number = 1,
+  perPage: number = 12,
+  tag?: string
 ): Promise<NotesApiResponse> {
-  const response = await axios.get<NotesApiResponse>('/notes', {
-    params: {
-      page,
-      perPage,
-      ...(search ? { search } : {}),
-    },
-  });
+  const params: Record<string, any> = {
+    page,
+    perPage,
+  };
+
+  if (search) params.search = search;
+  if (tag) params.tag = tag;  
+
+  const response = await axios.get<NotesApiResponse>('/notes', { params });
   return response.data;
 }
 
@@ -43,3 +48,11 @@ export async function fetchNoteById (id: number): Promise<Note> {
   const response = await axios.get<Note>(`/notes/${id}`);
   return response.data;
 };
+
+export async function getNotesByTag(tag: string): Promise<Note[]> {
+  const response = await axios.get<{ notes: Note[] }>('/notes', {
+    params: { tag },
+  });
+  return response.data.notes;
+}
+

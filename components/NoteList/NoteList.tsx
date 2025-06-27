@@ -1,3 +1,5 @@
+'use client';
+
 import css from './NoteList.module.css';
 import { Note } from '../../types/note';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -7,10 +9,10 @@ import Link from "next/link";
 
 
 interface NoteListProps {
-  items: Note[];
+  notes: Note[];
 }
 
-export default function NoteList({ items }: NoteListProps) {
+export default function NoteList({ notes }: NoteListProps) {
   const queryClient = useQueryClient();
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -35,7 +37,7 @@ export default function NoteList({ items }: NoteListProps) {
   return (
     <>
       <ul className={css.list}>
-        {items.map(note => (
+        {notes.map(note => (
           <li key={note.id} className={css.listItem}>
             <h2 className={css.title}>{note.title}</h2>
             <p className={css.content}>{note.content}</p>
