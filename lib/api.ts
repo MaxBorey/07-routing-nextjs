@@ -49,10 +49,15 @@ export async function fetchNoteById (id: number): Promise<Note> {
   return response.data;
 };
 
-export async function getNotesByTag(tag: string): Promise<Note[]> {
-  const response = await axios.get<{ notes: Note[] }>('/notes', {
-    params: { tag },
+export async function getTags(): Promise<string[]> {
+  const response = await axios.get<{ notes: Note[] }>('/notes');
+  const notes = response.data.notes;
+
+  const tagsSet = new Set<string>();
+  notes.forEach(note => {
+    if (note.tag) tagsSet.add(note.tag);
   });
-  return response.data.notes;
+
+  return Array.from(tagsSet);
 }
 

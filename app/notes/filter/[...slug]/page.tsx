@@ -1,24 +1,26 @@
-// app/notes/filter/[...slug]/page.tsx
-
 import { getNotes } from '@/lib/api';
-import NoteList from '@/components/NoteList/NoteList';
-import TagsMenu from '@/components/TagsMenu/TagsMenu';
+import NotesClient from './Notes.client';
 
 type Props = {
-  params: Promise<{ slug: string[] }>;
+  params: { slug?: string[] };
 };
 
 const NotesByTag = async ({ params }: Props) => {
-  const { slug } = await params;
-  const tag = slug[0] === 'all' ? undefined : slug[0];
-  const response = await getNotes('', 1, 12, tag);
+  const slug = params.slug || [];
+  const tag = slug[0] === 'all' || !slug.length ? undefined : slug[0];
+  const data = await getNotes('', 1, 12, tag);
 
   return (
-    <div>
-      <h1>Notes List</h1>
-      {response?.notes?.length > 0 && <NoteList notes={response.notes} />}
-    </div>
+    <NotesClient
+      initialNotes={data.notes}
+      initialTotalPages={data.totalPages}
+      initialPage={1}
+      initialSearch=""
+      tag={tag}
+    />
   );
 };
 
 export default NotesByTag;
+
+

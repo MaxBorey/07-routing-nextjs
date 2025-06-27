@@ -24,6 +24,7 @@ interface NotesClientProps {
   initialTotalPages: number;
   initialPage: number;
   initialSearch: string;
+  tag?: string;
 }
 
 export default function NotesClient({
@@ -31,13 +32,14 @@ export default function NotesClient({
   initialTotalPages,
   initialPage,
   initialSearch,
+  tag: initialTag,
 }: NotesClientProps) {
   const [page, setPage] = useState(initialPage);
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [debouncedSearchTerm] = useDebounce(searchTerm, 500);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tag] = useState(initialTag); // Фіксований тег
 
- 
   const invalidData =
     !Array.isArray(initialNotes) ||
     typeof initialTotalPages !== 'number' ||
@@ -45,10 +47,12 @@ export default function NotesClient({
     typeof initialSearch !== 'string';
 
   const { data, isLoading, isError } = useQuery<NotesApiResponse, Error>({
-    queryKey: ['notes', debouncedSearchTerm, page],
-    queryFn: () => getNotes(debouncedSearchTerm, page),
+    queryKey: ['notes', debouncedSearchTerm, page, tag],
+    queryFn: () => getNotes(debouncedSearchTerm, page, 12, tag),
     initialData:
-      page === initialPage && debouncedSearchTerm === initialSearch
+      page === initialPage &&
+      debouncedSearchTerm === initialSearch &&
+      tag === initialTag
         ? {
             notes: initialNotes,
             page: initialPage,
@@ -97,9 +101,7 @@ export default function NotesClient({
       {isError && <div style={{ color: 'red' }}>Error loading notes</div>}
       {!isLoading && !isError && <NoteList notes={notes} />}
 
-      {isModalOpen && (
-        <Modal onClose={() => setIsModalOpen(false)} />
-      )}
+      {isModalOpen && <Modal onClose={() => setIsModalOpen(false)} />}
     </div>
   );
 }

@@ -1,13 +1,12 @@
-'use client';
+"use client"
+
 import { useState } from 'react';
 import Link from 'next/link';
-import { getNotesByTag, NoteTag } from '@/lib/api';
-import css from './CategoriesMenu.module.css';
-import { Note } from '@/types/note';
+import css from './TagsMenu.module.css';
 
 type Props = {
-    tags: string[]; // масив назв тегів
-  };
+  tags: string[];
+};
 
 const TagsMenu = ({ tags }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,24 +14,23 @@ const TagsMenu = ({ tags }: Props) => {
 
   return (
     <div className={css.menuContainer}>
-      <button onClick={toggle} className={css.menuBtn}>
+      <button onClick={toggle} className={css.menuButton}>
         Notes ▾
       </button>
       {isOpen && (
-        <ul className={css.menu}>
-          <li className={css.menuItem}>
-            <Link href="/notes/filter" legacyBehavior>
-              <a onClick={toggle} className={css.menuLink}>
-                All notes
-              </a>
-            </Link>
-          </li>
+              <ul className={css.menuList}>
+                   <Link href="/notes/filter" onClick={toggle} className={css.menuLink}>
+      All notes
+    </Link>
+           
           {tags.map((tag) => (
             <li key={tag} className={css.menuItem}>
-              <Link href={`/notes/filter/${tag}`} legacyBehavior>
-                <a onClick={toggle} className={css.menuLink}>
-                  {tag}
-                </a>
+              <Link
+                href={`/notes/filter/${tag}`}
+                onClick={toggle}
+                className={css.menuLink}
+              >
+                {tag}
               </Link>
             </li>
           ))}

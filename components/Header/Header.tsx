@@ -1,8 +1,10 @@
+import TagsMenu from '../TagsMenu/TagsMenu';
 import css from './Header.module.css';
 import Link from 'next/link';
+import { getTags } from '../../lib/api';  // імпортуємо нову функцію
 
 const Header = async () => {
-  const tags = ['Work', 'Personal', 'Meeting', 'Shopping', 'Todo'];
+  const tags = await getTags();
 
   return (
     <header className={css.header}>
@@ -12,25 +14,10 @@ const Header = async () => {
       <nav aria-label="Main Navigation" role="navigation">
         <ul className={css.navigation}>
           <li>
-            <Link href="/" className={css.navLink}>
-              Home
-            </Link>
+            <Link href="/">Home</Link>
           </li>
           <li>
-            <div className={css.menuContainer}>
-              <button className={css.menuButton}>
-                Notes ▾
-              </button>
-              <ul className={css.menuList}>
-                {tags.map((tag) => (
-                  <li key={tag} className={css.menuItem}>
-                    <Link href={`/notes/filter/${tag}`} className={css.menuLink}>
-                      {tag}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <TagsMenu tags={tags} />
           </li>
         </ul>
       </nav>
