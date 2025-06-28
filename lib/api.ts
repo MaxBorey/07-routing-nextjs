@@ -25,7 +25,10 @@ export async function getNotes(
   };
 
   if (search) params.search = search;
-  if (tag) params.tag = tag;  
+  if (tag && tag.trim() !== '') {
+    params.tag = tag;
+  
+  }
 
   const response = await axios.get<NotesApiResponse>('/notes', { params });
   return response.data;

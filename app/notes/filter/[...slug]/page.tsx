@@ -7,7 +7,10 @@ type Props = {
 
 const NotesByTag = async ({ params }: Props) => {
   const { slug } = await params;
-  const tag = slug[0] === 'all' || !slug.length ? undefined : slug[0];
+
+  // Якщо slug немає або перший елемент 'all' — тег undefined (показуємо всі нотатки)
+  const tag = !slug || slug.length === 0 || slug[0] === 'all' ? undefined : slug[0];
+
   const data = await getNotes('', 1, 12, tag);
 
   return (
@@ -22,5 +25,3 @@ const NotesByTag = async ({ params }: Props) => {
 };
 
 export default NotesByTag;
-
-

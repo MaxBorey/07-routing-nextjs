@@ -1,33 +1,43 @@
-import {
-  QueryClient,
-  HydrationBoundary,
-  dehydrate,
-} from '@tanstack/react-query';
-import NoteDetailsClient from './NoteDetails.client';
-import { fetchNoteById } from '@/lib/api';
+"use client";
 
-export default async function NoteDetails({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
+import { fetchNoteById } from "@/lib/api";
+import Loader from "@/app/loading";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
+import css from "./NoteDetails.client.module.css";
+import ErrorMessage from "../filter/[...slug]/error";
+
+export default function NoteDetailsClient() {
+  const { id } = useParams<{ id: string }>();
   const noteId = Number(id);
-  const queryClient = new QueryClient();
-  if (isNaN(noteId)) {
-    throw new Error('Invalid note id');
-  }
-
-  
-
-  await queryClient.prefetchQuery({
-    queryKey: ['note', noteId],
+  const {
+    data: note,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["note", noteId],
     queryFn: () => fetchNoteById(noteId),
+    refetchOnMount: false,
   });
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <NoteDetailsClient noteId={Number(id)} />
-    </HydrationBoundary>
+    <>
+      {isLoading && <Loader />}
+      {isError && !note && <ErrorMessage error={error} reset={() => {}}/>}
+      {note && (
+        <div className={css.container}>
+          <div className={css.item}>
+            <div className={css.header}>
+              <h2>{note.title}</h2>
+              <button className={css.editBtn}>Edit note</button>
+            </div>
+            <p className={css.tag}>{String(note.tag)}</p>
+            <p className={css.content}>{note.content}</p>
+            <p className={css.date}>Created date: {note.createdAt}</p>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
