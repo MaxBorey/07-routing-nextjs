@@ -6,7 +6,7 @@ import css from './Modal.module.css';
 
 type ModalProps = {
   children: React.ReactNode;
-  onClose?: () => void;
+  onClose?: () => void; 
 };
 
 const Modal = ({ children, onClose }: ModalProps) => {
@@ -28,7 +28,6 @@ const Modal = ({ children, onClose }: ModalProps) => {
     };
   }, [close]);
 
-  
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       close();

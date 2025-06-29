@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
 import { getNotes } from '../../../../lib/api';
 import { Note } from '../../../../types/note';
-import Modal from '@/components/NoteModal/NoteModal';
+import Modal from '@/components/Modal/Modal';
 import NoteForm from '@/components/NoteForm/NoteForm';
 
 interface NotesApiResponse {
