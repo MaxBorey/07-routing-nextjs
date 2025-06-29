@@ -9,6 +9,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
 import { getNotes } from '../../../../lib/api';
 import { Note } from '../../../../types/note';
+import Modal from '@/components/NoteModal/NoteModal';
+import NoteForm from '@/components/NoteForm/NoteForm';
 
 interface NotesApiResponse {
   notes: Note[];
@@ -99,6 +101,13 @@ export default function NotesClient({
       {isLoading && <strong>Loading notes...</strong>}
       {isError && <div style={{ color: 'red' }}>Error loading notes</div>}
       {!isLoading && !isError && <NoteList notes={notes} />}
+
+      {isModalOpen && (
+      <Modal onClose={() => setIsModalOpen(false)}>
+        <NoteForm onClose={() => setIsModalOpen(false)} />
+      </Modal>
+)}
+
       
     </div>
   );
