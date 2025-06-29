@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 
 type ModalProps = {
   children: React.ReactNode;
+  onClose?: () => void; 
 };
 
 const Modal = ({ children }: ModalProps) => {
@@ -15,7 +16,6 @@ const Modal = ({ children }: ModalProps) => {
     <div className={css.backdrop} onClick={close}>
       <div className={css.modal} onClick={e => e.stopPropagation()}>
         {children}
-        <button onClick={close}>Close</button>
       </div>
     </div>
   );
