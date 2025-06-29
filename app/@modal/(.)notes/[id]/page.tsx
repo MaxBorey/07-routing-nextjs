@@ -1,11 +1,11 @@
 import { fetchNoteById } from '@/lib/api';
 import Modal from '@/components/Modal/Modal';
 
-type Props = {
-  params: Promise<{ id: string }>;
+interface NotePreviewProps {
+    params: Promise<{ id: string }>;
 };
-
-const NotePreview = async ({ params }: Props) => {
+  
+const NotePreview = async ({ params }:NotePreviewProps) => {
     const { id } = await params;
     const NoteId = Number(id)
   const note = await fetchNoteById(NoteId);

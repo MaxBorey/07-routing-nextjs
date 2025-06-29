@@ -2,11 +2,11 @@
 import css from './Modal.module.css';
 import { useRouter } from 'next/navigation';
 
-type Props = {
+type ModalProps = {
   children: React.ReactNode;
 };
 
-const Modal = ({ children }: Props) => {
+const Modal = ({ children }: ModalProps) => {
   const router = useRouter();
   
   const close = () => router.back();

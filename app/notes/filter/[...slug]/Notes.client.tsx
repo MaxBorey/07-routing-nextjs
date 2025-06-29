@@ -4,7 +4,6 @@ import { useState } from 'react';
 import css from './Notes.module.css';
 import NoteList from '../../../../components/NoteList/NoteList';
 import Pagination from '../../../../components/Pagination/Pagination';
-import Modal from '../../../../components/NoteModal/NoteModal';
 import SearchBox from '../../../../components/SearchBox/SearchBox';
 import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
@@ -100,8 +99,7 @@ export default function NotesClient({
       {isLoading && <strong>Loading notes...</strong>}
       {isError && <div style={{ color: 'red' }}>Error loading notes</div>}
       {!isLoading && !isError && <NoteList notes={notes} />}
-
-      {isModalOpen && <Modal onClose={() => setIsModalOpen(false)} />}
+      
     </div>
   );
 }

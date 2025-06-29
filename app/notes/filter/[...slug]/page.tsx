@@ -1,11 +1,11 @@
 import { getNotes } from '@/lib/api';
 import NotesClient from './Notes.client';
 
-type Props = {
+type NotesByTagProps = {
   params: Promise<{ slug: string[] }>;
 };
 
-export default async function NotesByTag  ({ params }: Props) {
+export default async function NotesByTag  ({ params }: NotesByTagProps) {
   const { slug } = await params;
   const tag = !slug || slug.length === 0 || slug[0] === 'all' ? undefined : slug[0];
 

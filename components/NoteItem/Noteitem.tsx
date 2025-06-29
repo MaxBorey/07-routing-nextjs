@@ -1,10 +1,10 @@
 import { Note } from "../../types/note";
 
-type Props = {
+type NoteItemProps = {
   item: Note;
 };
 
-const NoteItem = ({ item }: Props) => {
+const NoteItem = ({ item }: NoteItemProps) => {
   return (
     <li>
       <p>{item.title}</p>

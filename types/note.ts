@@ -6,3 +6,9 @@ export interface Note {
   createdAt: string;
   updatedAt: string;
 };
+
+export interface ErrorProps {
+  error: Error;
+  reset: () => void;
+};
+
