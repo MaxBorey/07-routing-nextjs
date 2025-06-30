@@ -1,7 +1,7 @@
 import axios from "axios";
-import { Note } from "../types/note";
+import { Note, NoteTag } from "../types/note";
 
-export type NoteTag = 'Work' | 'Personal' | 'Meeting' | 'Shopping' | 'Todo';
+
 
 interface NotesApiResponse {
   notes: Note[];
@@ -10,6 +10,7 @@ interface NotesApiResponse {
   total: number;
   totalPages: number;
 }
+
 axios.defaults.baseURL = 'https://notehub-public.goit.study/api';
 axios.defaults.headers.common.Authorization = `Bearer ${process.env.NEXT_PUBLIC_SWAGGER_TOKEN}`;
 
@@ -17,7 +18,7 @@ export async function getNotes(
   search: string = '',
   page: number = 1,
   perPage: number = 12,
-  tag?: string
+  tag?: NoteTag,
 ): Promise<NotesApiResponse> {
   const params: Record<string, any> = {
     page,

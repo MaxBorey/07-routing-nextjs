@@ -11,21 +11,15 @@ import { getNotes } from '../../../../lib/api';
 import { Note } from '../../../../types/note';
 import Modal from '@/components/Modal/Modal';
 import NoteForm from '@/components/NoteForm/NoteForm';
-
-interface NotesApiResponse {
-  notes: Note[];
-  page: number;
-  perPage: number;
-  total: number;
-  totalPages: number;
-}
+import { NotesApiResponse, NoteTag } from '@/types/note';
 
 interface NotesClientProps {
   initialNotes: Note[];
   initialTotalPages: number;
   initialPage: number;
   initialSearch: string;
-  tag?: string;
+  initialTotal: number;
+  tag?: NoteTag;
 }
 
 export default function NotesClient({
@@ -33,21 +27,23 @@ export default function NotesClient({
   initialTotalPages,
   initialPage,
   initialSearch,
+  initialTotal,
   tag: initialTag,
 }: NotesClientProps) {
   const [page, setPage] = useState(initialPage);
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [debouncedSearchTerm] = useDebounce(searchTerm, 500);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tag] = useState(initialTag); // Фіксований тег
+  const tag = initialTag;
 
   const invalidData =
     !Array.isArray(initialNotes) ||
     typeof initialTotalPages !== 'number' ||
     typeof initialPage !== 'number' ||
-    typeof initialSearch !== 'string';
+    typeof initialSearch !== 'string' ||
+    typeof initialTotal !== 'number';
 
-  const { data, isLoading, isError } = useQuery<NotesApiResponse, Error>({
+  const { data, isLoading, isError, error, isSuccess } = useQuery<NotesApiResponse, Error>({
     queryKey: ['notes', debouncedSearchTerm, page, tag],
     queryFn: () => getNotes(debouncedSearchTerm, page, 12, tag),
     initialData:
@@ -58,15 +54,19 @@ export default function NotesClient({
             notes: initialNotes,
             page: initialPage,
             perPage: 12,
-            total: initialNotes.length,
+            total: initialTotal,
             totalPages: initialTotalPages,
           }
         : undefined,
-    placeholderData: previousData => previousData,
+    placeholderData: (previousData) => previousData,
+    refetchOnMount: false,
   });
 
-  if (invalidData) {
-    return <div style={{ color: 'red' }}>No initial notes data</div>;
+  function toggleModal() {
+    setIsModalOpen(!isModalOpen);
+  }
+  function closeModal() {
+    setIsModalOpen(false);
   }
 
   const notes: Note[] = data?.notes ?? [];
@@ -74,7 +74,7 @@ export default function NotesClient({
 
   return (
     <div className={css.app}>
-      <header className={css.toolbar}>
+      <div className={css.toolbar}>
         <SearchBox
           value={searchTerm}
           onChange={(value) => {
@@ -84,31 +84,27 @@ export default function NotesClient({
         />
 
         {totalPages > 1 && (
-          <div className={css.paginationInline}>
-            <Pagination
-              pageCount={totalPages}
-              forcePage={page - 1}
-              onPageChange={({ selected }) => setPage(selected + 1)}
-            />
-          </div>
+          <Pagination
+            pageCount={totalPages}
+            forcePage={page - 1}
+            onPageChange={({ selected }) => setPage(selected + 1)}
+        />
         )}
 
-        <button className={css.button} onClick={() => setIsModalOpen(true)}>
+        <button className={css.button} onClick={toggleModal}>
           Create note +
         </button>
-      </header>
+      </div>
 
       {isLoading && <strong>Loading notes...</strong>}
       {isError && <div style={{ color: 'red' }}>Error loading notes</div>}
-      {!isLoading && !isError && <NoteList notes={notes} />}
+      {isSuccess && notes.length > 0 && <NoteList notes={notes} />}
 
       {isModalOpen && (
-      <Modal onClose={() => setIsModalOpen(false)}>
-        <NoteForm onClose={() => setIsModalOpen(false)} />
-      </Modal>
-)}
-
-      
+        <Modal onClose={closeModal}>
+          <NoteForm onClose={closeModal} />
+        </Modal>
+      )}
     </div>
   );
 }
