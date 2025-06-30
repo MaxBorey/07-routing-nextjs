@@ -1,13 +1,21 @@
 import { getNotes } from '@/lib/api';
 import NotesClient from './Notes.client';
+import { NoteTag } from '@/types/note';
 
 type NotesByTagProps = {
   params: Promise<{ slug: string[] }>;
 };
 
-export default async function NotesByTag  ({ params }: NotesByTagProps) {
+const validTags: NoteTag[] = ['Work', 'Personal', 'Meeting', 'Shopping', 'Todo'];
+
+function isNoteTag(tag: any): tag is NoteTag {
+  return validTags.includes(tag);
+}
+
+export default async function NotesByTag({ params }: NotesByTagProps) {
   const { slug } = await params;
-  const tag = !slug || slug.length === 0 || slug[0] === 'all' ? undefined : slug[0];
+  const rawTag = !slug || slug.length === 0 || slug[0] === 'all' ? undefined : slug[0];
+  const tag = isNoteTag(rawTag) ? rawTag : undefined;
 
   const data = await getNotes('', 1, 12, tag);
 
@@ -17,9 +25,10 @@ export default async function NotesByTag  ({ params }: NotesByTagProps) {
       initialTotalPages={data.totalPages}
       initialPage={1}
       initialSearch=""
+      initialTotal={data.total}
       tag={tag}
     />
   );
-};
+}
 
 
